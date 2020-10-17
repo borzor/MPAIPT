@@ -22,10 +22,8 @@ static void with_cache(benchmark::State& state, std::string path){//
     if((fd = open(path.c_str(), O_RDONLY))==-1)
         std::cerr<<"no file\n";
     for (auto _ : state) {
-        int p=pread(fd, buf, state.range(0), random(0,830000)*state.range(0));
-        if (p<state.range(0)){
-            std::cerr<<p<<" error on read\n";
-        }
+        if(pread(fd, buf, state.range(0), random(0,1048000)*state.range(0))<state.range(0))
+            std::cerr<<" error on read\n";
     }
     free(buf);
     close(fd);
@@ -38,8 +36,8 @@ static void without_cache(benchmark::State& state, std::string path){
         std::cerr<<"no file";
     posix_memalign(&buf, 512, state.range(0));
     for (auto _ : state) {
-        if(pread(fd, buf, state.range(0), random(0,830000)*state.range(0))<state.range())
-            std::cerr<<"error on read";
+        if(pread(fd, buf, state.range(0), random(0,1048000)*state.range(0))<state.range())
+            std::cerr<<"error on read\n";
     }
     free(buf);
     close(fd);
