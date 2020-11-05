@@ -1,10 +1,7 @@
 #include <iostream>
-#include <fstream>
 #include <benchmark/benchmark.h>
-#include <optional>
-#include "class.h"
-#include <functional>
 #include <fcntl.h>
+#include "class.h"
 
 static void func(benchmark::State& state, std::string path, int flag){
     test check(path,state.range(0),flag);

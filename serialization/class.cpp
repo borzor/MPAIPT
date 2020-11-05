@@ -1,9 +1,6 @@
 #include "class.h"
-#include <boost/align.hpp>
-#include <random>
 #include <stdexcept>
 #include <fcntl.h>
-#include <sys/eventfd.h>
 
 test::test(std::string path, std::size_t block_size,int flags)
         : block_size(block_size),vec(block_size)
