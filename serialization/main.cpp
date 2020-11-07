@@ -1,24 +1,37 @@
 #include <iostream>
 #include <benchmark/benchmark.h>
 #include <fcntl.h>
-#include "class.h"
+#include "class.hpp"
+#include <optional>
 
-static void func(benchmark::State& state, std::string path, int flag){
-    test check(path,state.range(0),flag);
+std::optional<class test> test_;
+
+static void func(benchmark::State& state){
+    for (auto _ : state)
+        test_->test_test();
+}
+
+int main(int argc, char* argv[]){
     try {
-        for (auto _ : state)
-            check.test_test();
+        if(argc<3)
+        {
+            throw std::runtime_error("error xd\n");
+        }
+        std::string f1=argv[1];
+        std::size_t f_size=std::stoul(argv[2]);
+        int mode = std::stoul(argv[3]); //040000
+        if(mode == 1){
+            mode = O_DIRECT|O_RDONLY;
+        }
+        test_.emplace(f1, f_size, mode);
+            BENCHMARK(func);
+            ::benchmark::RunSpecifiedBenchmarks();
     }
     catch(const std::exception& e){
         std::cerr << e.what() << '\n';
     }
+    return 0;
 }
 
 
-BENCHMARK_CAPTURE(func, state, "/home/boris/test8gb.txt", O_RDONLY)->Arg(16384);
-BENCHMARK_CAPTURE(func, state, "/home/boris/test8gb.txt", O_RDONLY|O_DIRECT)->Arg(16384);
-BENCHMARK_CAPTURE(func, state, "/media/boris/_borzor/test8gb.txt", O_RDONLY)->Arg(16384);
-BENCHMARK_CAPTURE(func, state, "/media/boris/_borzor/test8gb.txt", O_RDONLY|O_DIRECT)->Arg(16384);
-BENCHMARK_CAPTURE(func, state, "/media/boris/533f2c93-7470-451f-991a-5757fc7ad28e/backup1/test8gb.txt", O_RDONLY)->Arg(16384);
-BENCHMARK_CAPTURE(func, state, "/media/boris/533f2c93-7470-451f-991a-5757fc7ad28e/backup1/test8gb.txt", O_RDONLY|O_DIRECT)->Arg(16384);
-BENCHMARK_MAIN();
+

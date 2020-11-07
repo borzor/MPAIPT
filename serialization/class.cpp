@@ -1,25 +1,27 @@
-#include "class.h"
-#include <stdexcept>
+#include "class.hpp"
+#include <exception>
 #include <fcntl.h>
+#include <cerrno>
+#include <system_error>
 
-test::test(std::string path, std::size_t block_size,int flags)
-        : block_size(block_size),vec(block_size)
+test::test(std::string_view path, std::size_t block_size,int flags)
+    : block_size(block_size),vec(block_size)
     {
-        if((fd_ = open(path.c_str(), flags))==-1)
-            throw std::runtime_error("class:open failed");
+        if((fd_ = open(std::string(path).c_str(), flags))==-1)
+            throw std::system_error(errno,std::system_category(),"shit");
 }
-    int test::random(int min, int max) {
-        static std::mt19937 prng(std::random_device{}());
-        return std::uniform_int_distribution<>(min, max)(prng);
-    }
-    void test::test_test()
+int test::random(int min, int max) {
+    std::mt19937 prng(std::random_device{}());
+    return std::uniform_int_distribution<>(min, max)(prng);
+}
+void test::test_test()
     {
-        std::size_t offset = random(0,488000);
-        offset*=block_size;
-        uint64_t ret = pread(fd_, &vec[0], block_size, offset);
-        if(ret!=vec.size())
-            throw std::runtime_error("pread: failed");
-    }
+    std::size_t offset = random(0,488000);
+    offset*=block_size;
+    uint64_t ret = pread(fd_, &vec[0], block_size, offset);
+    if(ret!=vec.size())
+        throw std::system_error(errno,std::system_category(),"shit x2");
+}
 test::~test()
 {
     close(fd_);
