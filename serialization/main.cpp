@@ -19,7 +19,7 @@ int main(int argc, char* argv[]){
         }
         std::string f1=argv[1];
         std::size_t f_size=std::stoul(argv[2]);
-        int mode = std::stoul(argv[3]); //040000
+        int mode = std::stoul(argv[3]); 
         if(mode == 1){
             mode = O_DIRECT|O_RDONLY;
         }
